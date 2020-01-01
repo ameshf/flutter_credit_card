@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CreditCardWidget extends StatefulWidget {
@@ -10,6 +11,8 @@ class CreditCardWidget extends StatefulWidget {
     @required this.cardHolderName,
     @required this.cvvCode,
     @required this.showBackView,
+    this.autoImplementCardImage = false,
+    this.imgPath,
     this.animationDuration = const Duration(milliseconds: 500),
     this.height,
     this.width,
@@ -20,6 +23,7 @@ class CreditCardWidget extends StatefulWidget {
         super(key: key);
 
   final String cardNumber;
+  final String imgPath;
   final String expiryDate;
   final String cardHolderName;
   final String cvvCode;
@@ -29,6 +33,7 @@ class CreditCardWidget extends StatefulWidget {
   final Duration animationDuration;
   final double height;
   final double width;
+  final bool autoImplementCardImage;
 
   @override
   _CreditCardWidgetState createState() => _CreditCardWidgetState();
@@ -36,12 +41,11 @@ class CreditCardWidget extends StatefulWidget {
 
 class _CreditCardWidgetState extends State<CreditCardWidget>
     with SingleTickerProviderStateMixin {
+  bool isAmex = false;
   AnimationController controller;
   Animation<double> _frontRotation;
   Animation<double> _backRotation;
   Gradient backgroundGradientColor;
-
-  bool isAmex = false;
 
   @override
   void initState() {
@@ -105,8 +109,8 @@ class _CreditCardWidgetState extends State<CreditCardWidget>
 
   @override
   Widget build(BuildContext context) {
-    final double height = MediaQuery.of(context).size.height;
-    final double width = MediaQuery.of(context).size.width;
+    final double height = MediaQuery.of(context).size.width * 0.525;
+    final double width = MediaQuery.of(context).size.width * 0.9;
     final Orientation orientation = MediaQuery.of(context).orientation;
 
     ///
@@ -137,95 +141,99 @@ class _CreditCardWidgetState extends State<CreditCardWidget>
   ///
   /// Builds a back container containing cvv
   ///
-  Container buildBackContainer(
+  Column buildBackContainer(
     double width,
     double height,
     BuildContext context,
     Orientation orientation,
   ) {
     final TextStyle defaultTextStyle = Theme.of(context).textTheme.title.merge(
-          TextStyle(
+          const TextStyle(
             color: Colors.black,
             fontFamily: 'halter',
             fontSize: 16,
             package: 'flutter_credit_card',
           ),
         );
-
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: const <BoxShadow>[
-          BoxShadow(
-            color: Colors.black26,
-            offset: Offset(0, 0),
-            blurRadius: 24,
+    return Column(
+      children: <Widget>[
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: const <BoxShadow>[
+              BoxShadow(
+                color: Colors.black26,
+                offset: Offset(0, 0),
+                blurRadius: 24,
+              ),
+            ],
+            gradient: backgroundGradientColor,
           ),
-        ],
-        gradient: backgroundGradientColor,
-      ),
-      margin: const EdgeInsets.all(16),
-      width: widget.width ?? width,
-      height: widget.height ??
-          (orientation == Orientation.portrait ? height / 4 : height / 2),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Expanded(
-            flex: 2,
-            child: Container(
-              margin: const EdgeInsets.only(top: 16),
-              height: 48,
-              color: Colors.black,
-            ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Container(
-              margin: const EdgeInsets.only(top: 16),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Expanded(
-                    flex: 9,
-                    child: Container(
-                      height: 48,
-                      color: Colors.white70,
-                    ),
-                  ),
-                  Expanded(
-                    flex: 3,
-                    child: Container(
-                      color: Colors.white,
-                      child: Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: Text(
-                          widget.cvvCode.isEmpty
-                              ? isAmex ? 'XXXX' : 'XXX'
-                              : widget.cvvCode,
-                          maxLines: 1,
-                          style: widget.textStyle ?? defaultTextStyle,
+          margin: const EdgeInsets.all(16),
+          width: widget.width ?? width,
+          height: widget.height ??
+              (orientation == Orientation.portrait ? height : height),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                flex: 2,
+                child: Container(
+                  margin: const EdgeInsets.only(top: 16),
+                  height: 48,
+                  color: Colors.black,
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: Container(
+                  margin: const EdgeInsets.only(top: 16),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Expanded(
+                        flex: 9,
+                        child: Container(
+                          height: 48,
+                          color: Colors.white70,
                         ),
                       ),
-                    ),
-                  )
-                ],
+                      Expanded(
+                        flex: 3,
+                        child: Container(
+                          color: Colors.white,
+                          child: Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: Text(
+                              widget.cvvCode.isEmpty
+                                  ? isAmex ? 'XXXX' : 'XXX'
+                                  : widget.cvvCode,
+                              maxLines: 1,
+                              style: widget.textStyle ?? defaultTextStyle,
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Align(
-              alignment: Alignment.bottomRight,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-                child: getCardTypeIcon(widget.cardNumber),
+              Expanded(
+                flex: 2,
+                child: Align(
+                  alignment: Alignment.bottomRight,
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                    child: getCardTypeIcon(widget.cardNumber),
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -233,7 +241,7 @@ class _CreditCardWidgetState extends State<CreditCardWidget>
   /// Builds a front container containing
   /// Card number, Exp. year and Card holder name
   ///
-  Container buildFrontContainer(
+  Column buildFrontContainer(
     double width,
     double height,
     BuildContext context,
@@ -247,71 +255,98 @@ class _CreditCardWidgetState extends State<CreditCardWidget>
             package: 'flutter_credit_card',
           ),
         );
+    /*
+    print(width.toString() + "w");
+    print(height.toString() + "h");
+    print(MediaQuery.of(context).size.width);*/
 
-    return Container(
-      margin: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: const <BoxShadow>[
-          BoxShadow(
-            color: Colors.black26,
-            offset: Offset(0, 0),
-            blurRadius: 24,
-          )
-        ],
-        gradient: backgroundGradientColor,
-      ),
-      width: widget.width ?? width,
-      height: widget.height ??
-          (orientation == Orientation.portrait ? height / 4 : height / 2),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Align(
-            alignment: Alignment.topRight,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16, top: 8),
-              child: getCardTypeIcon(widget.cardNumber),
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 16),
-              child: Text(
-                widget.cardNumber.isEmpty || widget.cardNumber == null
-                    ? 'XXXX XXXX XXXX XXXX'
-                    : widget.cardNumber,
-                style: widget.textStyle ?? defaultTextStyle,
+    return Column(
+      children: <Widget>[
+        Container(
+          margin: const EdgeInsets.all(16),
+          decoration: widget.autoImplementCardImage == false
+              ? widget.imgPath != null
+                  ? BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      image: DecorationImage(
+                          image: AssetImage(widget.imgPath),
+                          fit: BoxFit.fitWidth))
+                  : BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: const <BoxShadow>[
+                        BoxShadow(
+                          color: Colors.black26,
+                          offset: Offset(0, 0),
+                          blurRadius: 24,
+                        )
+                      ],
+                      gradient: backgroundGradientColor,
+                    )
+              : BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  image: DecorationImage(
+                      image: AssetImage(getCardTypeImg(widget.cardNumber)),
+                      fit: BoxFit.fitWidth)),
+          width: widget.width ?? width,
+          height: widget.height ?? height,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 16, right: 16, top: 8),
+                  child: widget.autoImplementCardImage
+                      ? Container(
+                          height: 48,
+                          width: 48,
+                        )
+                      : getCardTypeIcon(widget.cardNumber),
+                ),
               ),
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 16),
-              child: Text(
-                widget.expiryDate.isEmpty || widget.expiryDate == null
-                    ? 'MM/YY'
-                    : widget.expiryDate,
-                style: widget.textStyle ?? defaultTextStyle,
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 16),
+                  child: Text(
+                    widget.cardNumber.isEmpty || widget.cardNumber == null
+                        ? 'XXXX XXXX XXXX XXXX'
+                        : widget.cardNumber,
+                    style: widget.textStyle ?? defaultTextStyle,
+                  ),
+                ),
               ),
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-              child: Text(
-                widget.cardHolderName.isEmpty || widget.cardHolderName == null
-                    ? 'CARD HOLDER'
-                    : widget.cardHolderName,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: widget.textStyle ?? defaultTextStyle,
+              Expanded(
+                flex: 1,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 16),
+                  child: Text(
+                    widget.expiryDate.isEmpty || widget.expiryDate == null
+                        ? 'MM/YY'
+                        : widget.expiryDate,
+                    style: widget.textStyle ?? defaultTextStyle,
+                  ),
+                ),
               ),
-            ),
+              Expanded(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                  child: Text(
+                    widget.cardHolderName.isEmpty ||
+                            widget.cardHolderName == null
+                        ? 'CARD HOLDER'
+                        : widget.cardHolderName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: widget.textStyle ??
+                        defaultTextStyle.copyWith(fontSize: 13),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -319,7 +354,7 @@ class _CreditCardWidgetState extends State<CreditCardWidget>
   /// A [List<String>] represents a range.
   /// i.e. ['51', '55'] represents the range of cards starting with '51' to those starting with '55'
   Map<CardType, Set<List<String>>> cardNumPatterns =
-  <CardType, Set<List<String>>>{
+      <CardType, Set<List<String>>>{
     CardType.visa: <List<String>>{
       <String>['4'],
     },
@@ -448,6 +483,33 @@ class _CreditCardWidgetState extends State<CreditCardWidget>
     }
 
     return icon;
+  }
+
+  String getCardTypeImg(String cardNumber) {
+    String imgPath;
+    switch (detectCCType(cardNumber)) {
+      case CardType.visa:
+        imgPath = '../cards/visa.png';
+        break;
+
+      case CardType.americanExpress:
+        imgPath = '../cards/amex.png';
+        break;
+
+      case CardType.mastercard:
+        imgPath = '../cards/mastercard.png';
+        break;
+
+      case CardType.discover:
+        imgPath = '../cards/discover.png';
+        break;
+
+      default:
+        imgPath = '../cards/default.png';
+        break;
+    }
+
+    return imgPath;
   }
 }
 

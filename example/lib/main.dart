@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_credit_card/credit_card_form.dart';
 import 'package:flutter_credit_card/credit_card_model.dart';
@@ -33,6 +34,8 @@ class MySampleState extends State<MySample> {
           child: Column(
             children: <Widget>[
               CreditCardWidget(
+                autoImplementCardImage: true,
+                imgPath: 'assets/3.png',
                 cardNumber: cardNumber,
                 expiryDate: expiryDate,
                 cardHolderName: cardHolderName,
@@ -42,6 +45,7 @@ class MySampleState extends State<MySample> {
               Expanded(
                 child: SingleChildScrollView(
                   child: CreditCardForm(
+                    onExpiryDateError: "Error",
                     onCreditCardModelChange: onCreditCardModelChange,
                   ),
                 ),
