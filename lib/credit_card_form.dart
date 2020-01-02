@@ -65,7 +65,8 @@ class _CreditCardFormState extends State<CreditCardForm> {
   /* MaskedTextController(mask: '0000 0000 0000 0000');*/
   final TextEditingController _expiryDateController =
       MaskedTextController(mask: '00/00');
-  final TextEditingController _cardHolderNameController = TextEditingController();
+  final TextEditingController _cardHolderNameController =
+      TextEditingController();
   MaskedTextController _cvvCodeController;
   /*MaskedTextController(mask: '0000');*/
 
@@ -75,14 +76,15 @@ class _CreditCardFormState extends State<CreditCardForm> {
   }
 
   void createCreditCardModel() {
-    cardNumber = widget.cardNumber ?? '';
-    expiryDate = widget.expiryDate ?? '';
-    cardHolderName = widget.cardHolderName ?? '';
-    cvvCode = widget.cvvCode ?? '';
+    cardNumber = widget.cardNumber ?? widget.preCardNumber;
+    expiryDate = widget.expiryDate ?? widget.preExpiryDate;
+    cardHolderName = widget.cardHolderName ?? widget.preCardHolderName;
+    cvvCode = widget.cvvCode ?? widget.preCvvCode;
 
     creditCardModel = CreditCardModel(
         cardNumber, expiryDate, cardHolderName, cvvCode, isCvvFocused);
   }
+
 
   @override
   void initState() {
@@ -100,13 +102,13 @@ class _CreditCardFormState extends State<CreditCardForm> {
 
     cvvFocusNode.addListener(textFieldFocusDidChange);
 
-    setState(() {
+    /*setState(() {
       creditCardModel.cardNumber = widget.preCardNumber;
       creditCardModel.expiryDate = widget.preExpiryDate;
       creditCardModel.cvvCode = widget.preCvvCode;
       creditCardModel.cardHolderName = widget.preCardHolderName;
       onCreditCardModelChange(creditCardModel);
-    });
+    });*/
 
     _cardNumberController.addListener(() {
       setState(() {
