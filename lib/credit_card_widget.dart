@@ -285,7 +285,8 @@ class _CreditCardWidgetState extends State<CreditCardWidget>
               : BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                   image: DecorationImage(
-                      image: AssetImage(getCardTypeImg(widget.cardNumber)),
+                      image: AssetImage(getCardTypeImg(widget.cardNumber),
+                          package: 'flutter_credit_card'),
                       fit: BoxFit.fitWidth)),
           width: widget.width ?? width,
           height: widget.height ?? height,
@@ -489,23 +490,24 @@ class _CreditCardWidgetState extends State<CreditCardWidget>
     String imgPath;
     switch (detectCCType(cardNumber)) {
       case CardType.visa:
-        imgPath = '../cards/visa.png';
+        imgPath = 'cards/visa_card.png';
+
         break;
 
       case CardType.americanExpress:
-        imgPath = '../cards/amex.png';
+        imgPath = 'cards/amex_card.png';
         break;
 
       case CardType.mastercard:
-        imgPath = '../cards/mastercard.png';
+        imgPath = 'cards/mastercard_card.png';
         break;
 
       case CardType.discover:
-        imgPath = '../cards/discover.png';
+        imgPath = 'cards/discover_card.png';
         break;
 
       default:
-        imgPath = '../cards/default.png';
+        imgPath = 'cards/default_card.png';
         break;
     }
 
