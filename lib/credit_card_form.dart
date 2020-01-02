@@ -16,6 +16,10 @@ class CreditCardForm extends StatefulWidget {
     this.expiryDate,
     this.cardHolderName,
     this.cvvCode,
+    @required this.preCardNumber,
+    @required this.preCardHolderName,
+    @required this.preCvvCode,
+    @required this.preExpiryDate,
     @required this.onExpiryDateError,
     @required this.onCreditCardModelChange,
     this.themeColor,
@@ -27,6 +31,10 @@ class CreditCardForm extends StatefulWidget {
   final String expiryDate;
   final String cardHolderName;
   final String cvvCode;
+  final String preCardNumber;
+  final String preExpiryDate;
+  final String preCardHolderName;
+  final String preCvvCode;
   final void Function(CreditCardModel) onCreditCardModelChange;
   final Color themeColor;
   final Color textColor;
@@ -57,8 +65,7 @@ class _CreditCardFormState extends State<CreditCardForm> {
   /* MaskedTextController(mask: '0000 0000 0000 0000');*/
   final TextEditingController _expiryDateController =
       MaskedTextController(mask: '00/00');
-  final TextEditingController _cardHolderNameController =
-      TextEditingController();
+  final TextEditingController _cardHolderNameController = TextEditingController();
   MaskedTextController _cvvCodeController;
   /*MaskedTextController(mask: '0000');*/
 
@@ -92,6 +99,14 @@ class _CreditCardFormState extends State<CreditCardForm> {
     onCreditCardModelChange = widget.onCreditCardModelChange;
 
     cvvFocusNode.addListener(textFieldFocusDidChange);
+
+    setState(() {
+      creditCardModel.cardNumber = widget.preCardNumber;
+      creditCardModel.expiryDate = widget.preExpiryDate;
+      creditCardModel.cvvCode = widget.preCvvCode;
+      creditCardModel.cardHolderName = widget.preCardHolderName;
+      onCreditCardModelChange(creditCardModel);
+    });
 
     _cardNumberController.addListener(() {
       setState(() {
