@@ -16,7 +16,6 @@ class CreditCardForm extends StatefulWidget {
     this.expiryDate,
     this.cardHolderName,
     this.cvvCode,
-    @required this.onExpiryDateError,
     @required this.onCreditCardModelChange,
     this.themeColor,
     this.textColor = Colors.black,
@@ -31,7 +30,6 @@ class CreditCardForm extends StatefulWidget {
   final Color themeColor;
   final Color textColor;
   final Color cursorColor;
-  final String onExpiryDateError;
 
   @override
   _CreditCardFormState createState() => _CreditCardFormState();
@@ -45,7 +43,6 @@ class _CreditCardFormState extends State<CreditCardForm> {
   bool isCvvFocused = false;
   Color themeColor;
   bool isAmex = false;
-  bool isExpError = false;
   FocusNode cardFocusNode = FocusNode();
   FocusNode expDateFocusNode = FocusNode();
   FocusNode cvvFocusNode = FocusNode();
@@ -81,9 +78,6 @@ class _CreditCardFormState extends State<CreditCardForm> {
   void initState() {
     super.initState();
 
-    int currentMonth = DateTime.now().month;
-    int currentYear = int.parse(DateTime.now().year.toString().substring(2, 4));
-
     createCreditCardModel();
 
     _cardNumberController = MaskedTextController(mask: '0000 0000 0000 0000');
@@ -116,19 +110,6 @@ class _CreditCardFormState extends State<CreditCardForm> {
         expiryDate = _expiryDateController.text;
         creditCardModel.expiryDate = expiryDate;
         onCreditCardModelChange(creditCardModel);
-        if (expiryDate.length == 5) {
-          var enteredMonth = int.parse(expiryDate.substring(0, 2));
-
-          var enteredYear = int.parse(expiryDate.substring(3, 5));
-          if (enteredYear < currentYear ||
-              (enteredYear == currentYear && enteredMonth < currentMonth)) {
-            isExpError = true;
-          } else {
-            isExpError = false;
-          }
-        } else {
-          isExpError = false;
-        }
       });
     });
 
@@ -213,7 +194,7 @@ class _CreditCardFormState extends State<CreditCardForm> {
                 controller: _expiryDateController,
                 cursorColor: widget.cursorColor ?? themeColor,
                 style: TextStyle(
-                  color: isExpError ? Colors.red : widget.textColor,
+                  color: widget.textColor,
                 ),
                 decoration: const InputDecoration(
                     labelText: 'Expired Date', hintText: 'MM/YY'),
@@ -221,19 +202,6 @@ class _CreditCardFormState extends State<CreditCardForm> {
                 textInputAction: TextInputAction.next,
               ),
             ),
-            isExpError
-                ? Row(
-                    children: <Widget>[
-                      Container(
-                        padding: const EdgeInsets.only(left: 20),
-                        child: Text(
-                          widget.onExpiryDateError,
-                          style: TextStyle(color: Colors.red, fontSize: 12),
-                        ),
-                      ),
-                    ],
-                  )
-                : Container(),
             Container(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               margin: const EdgeInsets.only(left: 16, right: 16),

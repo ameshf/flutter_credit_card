@@ -45,7 +45,6 @@ class MySampleState extends State<MySample> {
               Expanded(
                 child: SingleChildScrollView(
                   child: CreditCardForm(
-                    onExpiryDateError: "Error",
                     onCreditCardModelChange: onCreditCardModelChange,
                   ),
                 ),
