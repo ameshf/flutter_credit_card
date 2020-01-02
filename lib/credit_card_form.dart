@@ -81,10 +81,13 @@ class _CreditCardFormState extends State<CreditCardForm> {
     cardHolderName = widget.cardHolderName ?? widget.preCardHolderName;
     cvvCode = widget.cvvCode ?? widget.preCvvCode;
     if (cardNumber != '') {
-      _cardNumberController.text =  cardNumber.toString();
-      _expiryDateController.text = expiryDate.toString() ;
-      _cvvCodeController.text = cvvCode.toString();
-      _cardHolderNameController.text = cardHolderName.toString();
+      setState(() {
+        _cardNumberController.text = cardNumber.toString();
+        _expiryDateController.text = expiryDate.toString();
+        _cvvCodeController.text = cvvCode.toString();
+        _cardHolderNameController.text = cardHolderName.toString();
+      });
+
     }
     creditCardModel = CreditCardModel(
         cardNumber, expiryDate, cardHolderName, cvvCode, isCvvFocused);
